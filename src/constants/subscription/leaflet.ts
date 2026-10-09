@@ -1,3 +1,5 @@
+export const SHOW_MAP_LEGEND = false;
+
 export const LEAFLET_TILE_SIZE = 256;
 export const LEAFLET_IMAGE_WIDTH = 21617;
 export const LEAFLET_IMAGE_HEIGHT = 16785;

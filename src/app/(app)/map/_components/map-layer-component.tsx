@@ -11,6 +11,7 @@ import { ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
+import { SHOW_MAP_LEGEND } from "@/constants/subscription/leaflet";
 
 import { MapComponent } from "./map-component";
 import { MapSidebar } from "./map-sidebar";
@@ -49,27 +50,29 @@ export function MapLayer({ categories, subscriptions }: MapLayerProps) {
         />
       </div>
 
-      <Button
-        variant={sidebarOpen ? "default" : "secondary"}
-        className={`absolute top-5 left-4 z-50 flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 ${
-          sidebarOpen ? "flex-row-reverse" : ""
-        }`}
-        onClick={toggleSidebar}
-      >
-        <motion.div
-          layout
-          animate={{ rotate: sidebarOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
+      {SHOW_MAP_LEGEND && (
+        <Button
+          variant={sidebarOpen ? "default" : "secondary"}
+          className={`absolute top-5 left-4 z-50 flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 ${
+            sidebarOpen ? "flex-row-reverse" : ""
+          }`}
+          onClick={toggleSidebar}
         >
-          <ChevronRight className="h-4 w-4 shrink-0" />
-        </motion.div>
-        <motion.div layout transition={{ duration: 0.3 }}>
-          <h2 className="text-lg font-semibold">Legenda</h2>
-        </motion.div>
-      </Button>
+          <motion.div
+            layout
+            animate={{ rotate: sidebarOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ChevronRight className="h-4 w-4 shrink-0" />
+          </motion.div>
+          <motion.div layout transition={{ duration: 0.3 }}>
+            <h2 className="text-lg font-semibold">Legenda</h2>
+          </motion.div>
+        </Button>
+      )}
 
       <AnimatePresence>
-        {sidebarOpen && (
+        {SHOW_MAP_LEGEND && sidebarOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
