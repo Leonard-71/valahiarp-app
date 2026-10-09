@@ -67,19 +67,3 @@ export const dashboardSidebarConfig = createSidebarConfig({
     },
   ],
 });
-
-export const profileSidebarConfig = createSidebarConfig({
-  title: "Profil",
-  routes: [
-    {
-      href: "/profile",
-      iconName: "User",
-      label: "Informații personale",
-    },
-    {
-      href: "/profile/history",
-      iconName: "History",
-      label: "Istoric achiziții",
-    },
-  ],
-});

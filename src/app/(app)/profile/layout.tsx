@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 
-import { SidebarLayout } from "@/components/custom/layouts";
 import { layerGuard } from "@/guards";
-import { profileSidebarConfig } from "@/lib/sidebar-configs";
 
 export const metadata: Metadata = {
   title: {
@@ -20,6 +18,6 @@ export default layerGuard(function ProfileLayout({
   children,
 }: ProfileLayoutProps) {
   return (
-    <SidebarLayout config={profileSidebarConfig}>{children}</SidebarLayout>
+    <div className="mx-auto w-full max-w-7xl px-5 py-8 md:px-8">{children}</div>
   );
 }, []);
