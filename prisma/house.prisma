@@ -1,0 +1,20 @@
+model House {
+    id          Int       @id @default(autoincrement())
+    name        String
+    inventory   Int       @default(0)
+    taxPrice    Decimal
+    price       Decimal   @default(0)
+    sortOrder   Int       @default(999)
+    isOccupied  Boolean   @default(false)
+    isArchived  Boolean   @default(false)
+    archivedAt  DateTime?
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    createdBy    User?   @relation("CreatedHouses", fields: [createdById], references: [id], onDelete: SetNull)
+    createdById  String?
+    archivedBy   User?   @relation("ArchivedHouses", fields: [archivedById], references: [id], onDelete: SetNull)
+    archivedById String?
+
+    @@map("houses")
+}

@@ -1,0 +1,23 @@
+enum InvoiceStatus {
+    PAID
+    REFUNDED
+    REVOKED
+}
+
+model Invoice {
+    id                    Int           @id @default(autoincrement())
+    stripeInvoiceId       String        @unique
+    stripePaymentIntentId String        @unique
+    status                InvoiceStatus @default(PAID)
+    total                 Decimal
+    currency              String
+    productsTotal         Decimal
+    productsCurrency      String
+    issuedAt              DateTime
+    createdAt             DateTime      @default(now())
+    updatedAt             DateTime      @updatedAt
+
+    order Order? @relation("OrderInvoice")
+
+    @@map("invoice")
+}

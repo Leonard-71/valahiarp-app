@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reminder expirare pachet</title>
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 700px;
+        margin: auto;
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        color: #333;
+      }
+
+      h2 {
+        color: #d35400;
+        margin-top: 0;
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .highlight {
+        font-weight: bold;
+        color: #c0392b;
+      }
+
+      ul {
+        margin-left: 20px;
+        padding-left: 20px;
+      }
+      li {
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {{#if isMultiple}}
+      <h2>⚠️ Pachetele tale expiră în curând!</h2>
+      {{/if}} {{#unless isMultiple}}
+      <h2>⚠️ Pachetul tău expiră în curând!</h2>
+      {{/unless}}
+
+      <p>Salut, {{name}}!</p>
+
+      {{#if isMultiple}}
+      <p>
+        Îți reamintim că următoarele
+        <span class="highlight">{{packageCount}} pachete</span> expiră în
+        curând:
+      </p>
+      <ul>
+        {{#each packageNames}}
+        <li><strong>{{this}}</strong></li>
+        {{/each}}
+      </ul>
+      {{/if}} {{#unless isMultiple}}
+      <p>
+        Îți reamintim că pachetul
+        <span class="highlight">{{packageName}}</span> va expira în curând.
+      </p>
+      {{/unless}}
+
+      <p>
+        Dacă dorești să continui beneficiile, poți reînnoi {{#if
+        isMultiple}}pachetele{{/if}}{{#unless isMultiple}}pachetul{{/unless}}
+        până atunci.
+      </p>
+      <p>Mulțumim că faci parte din comunitatea <strong>SĂPTĂRII</strong>!</p>
+    </div>
+  </body>
+</html>

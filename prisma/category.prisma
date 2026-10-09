@@ -1,0 +1,24 @@
+model Category {
+    id                  Int       @id @default(autoincrement())
+    name                String    @unique
+    isMonthly           Boolean   @default(false)
+    isExclusiveToOwner  Boolean   @default(false)
+    limitOnePerCategory Boolean   @default(false)
+    requiresCode        Boolean   @default(false)
+    hasLeaflet          Boolean   @default(false)
+    isArchived          Boolean   @default(false)
+    archivedAt          DateTime?
+    createdAt           DateTime  @default(now())
+    updatedAt           DateTime  @updatedAt
+
+    configuration Configuration? @relation("CategoryStyleRelation")
+
+    subscriptions Subscription[] @relation("CategorySubscriptions")
+
+    createdBy    User?   @relation("CreatedCategories", fields: [createdById], references: [id], onDelete: SetNull)
+    createdById  String?
+    archivedBy   User?   @relation("ArchivedCategories", fields: [archivedById], references: [id], onDelete: SetNull)
+    archivedById String?
+
+    @@map("categories")
+}

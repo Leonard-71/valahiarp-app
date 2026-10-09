@@ -1,0 +1,9 @@
+const CURRENCY = "ron";
+const PRODUCT_CURRENCY = "eur";
+
+const CURRENCY_LABELS = {
+  [CURRENCY]: "RON",
+  [PRODUCT_CURRENCY]: "EURO",
+};
+
+export { CURRENCY, PRODUCT_CURRENCY, CURRENCY_LABELS };

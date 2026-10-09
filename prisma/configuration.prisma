@@ -1,0 +1,57 @@
+enum IconTag {
+    HOUSE
+    PAW_PRINT
+    UNIVERSITY
+    BRIEFCASE_BUSINESS
+    HANDSHAKE
+    BEER
+    WINE
+    STORE
+    SHOPPING_BASKET
+    CASTLE
+    TENT
+    SCALE
+    TENT_TREE
+    FLAME_KINDLING
+    USERS
+    TRAIN_TRACK
+    SHIP
+    SCISSORS
+    COAT_HANGER
+    CROISSANT
+    FACTORY
+    TREES
+    TREE_PINE
+    FISH
+    BINOCULARS
+    STETHOSCOPE
+    HOSPITAL
+    BRIEFCASE_MEDICAL
+    ID_CARD_LANYARD
+    SCROLL_TEXT
+    LANDMARK
+    UTENSILS_CROSSED
+    CCTV
+    CHURCH
+    HAMMER
+    PICKAXE
+    SWORDS
+}
+
+model Configuration {
+    id        Int      @id @default(autoincrement())
+    color     String
+    icon      IconTag
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    category   Category @relation("CategoryStyleRelation", fields: [categoryId], references: [id], onDelete: Cascade)
+    categoryId Int      @unique
+
+    createdBy    User?   @relation("CreatedConfigurations", fields: [createdById], references: [id], onDelete: SetNull)
+    createdById  String?
+    archivedBy   User?   @relation("ArchivedConfigurations", fields: [archivedById], references: [id], onDelete: SetNull)
+    archivedById String?
+
+    @@map("configurations")
+}

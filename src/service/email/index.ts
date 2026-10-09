@@ -1,0 +1,1 @@
+export * from '@/service/email/email.service';

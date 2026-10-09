@@ -1,0 +1,18 @@
+model Order {
+    id                    Int       @id @default(autoincrement())
+    expiresAt             DateTime?
+    expirationEmailSentAt DateTime?
+    createdAt             DateTime  @default(now())
+    updatedAt             DateTime  @updatedAt
+
+    invoice   Invoice @relation("OrderInvoice", fields: [invoiceId], references: [id], onDelete: Restrict)
+    invoiceId Int     @unique
+
+    user   User   @relation("UserOrders", fields: [userId], references: [id], onDelete: Restrict)
+    userId String
+
+    subscription   Subscription @relation("SubscriptionOrders", fields: [subscriptionId], references: [id], onDelete: Restrict)
+    subscriptionId Int
+
+    @@map("order")
+}

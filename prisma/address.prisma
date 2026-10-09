@@ -1,0 +1,18 @@
+model Address {
+    placeId     String   @id
+    street      String
+    city        String
+    county      String
+    postalCode  String
+    country     String
+    displayName String
+    latitude    Decimal?
+    longitude   Decimal?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    users User[] @relation("UserAddress")
+
+    @@map("addresses")
+}
