@@ -17,3 +17,9 @@ export const getStripe = (): Stripe => {
 
   return stripeInstance;
 };
+
+export const isMissingStripeCustomer = (error: unknown) =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  (error as { code?: string }).code === "resource_missing";

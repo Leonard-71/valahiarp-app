@@ -28,7 +28,7 @@ import {
 import prisma from "@/lib/prisma";
 import { revalidateOrderPaths } from "@/lib/revalidate";
 import { searchBuilder } from "@/lib/search-builder";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, isMissingStripeCustomer } from "@/lib/stripe";
 import {
   OrderPayload,
   SingleOrderResponseDto,
@@ -182,26 +182,31 @@ async function checkout(
     };
   }
 
-  let customer: string;
+  let customer = user.stripeCustomerId ?? "";
 
   const stripe = getStripe();
+  const customerDetails = {
+    email: user.email,
+    name: user.name ?? "",
+    phone: user.phone ?? "",
+    address: stripeAddressFromManual(user.manualAddress),
+    preferred_locales: [LOCALE],
+  };
 
-  if (user.stripeCustomerId) {
-    customer = user.stripeCustomerId;
-    await stripe.customers.update(customer, {
-      email: user.email,
-      name: user.name ?? "",
-      phone: user.phone ?? "",
-      address: stripeAddressFromManual(user.manualAddress),
-      preferred_locales: [LOCALE],
-    });
-  } else {
+  if (customer) {
+    try {
+      await stripe.customers.update(customer, customerDetails);
+    } catch (error) {
+      if (!isMissingStripeCustomer(error)) {
+        throw error;
+      }
+      customer = "";
+    }
+  }
+
+  if (!customer) {
     const customerObject = await stripe.customers.create({
-      email: user.email,
-      name: user.name ?? "",
-      phone: user.phone ?? "",
-      address: stripeAddressFromManual(user.manualAddress),
-      preferred_locales: [LOCALE],
+      ...customerDetails,
       invoice_settings: {
         rendering_options: {
           template: process.env.TEMPLATE_INVOICE_ID,

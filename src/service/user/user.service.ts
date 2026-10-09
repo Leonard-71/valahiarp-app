@@ -9,7 +9,7 @@ import prisma from "@/lib/prisma";
 import { revalidateUserPaths } from "@/lib/revalidate";
 import { searchBuilder } from "@/lib/search-builder";
 import { stripeAddressFromManual } from "@/lib/manual-address";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, isMissingStripeCustomer } from "@/lib/stripe";
 import {
   BasicUserResponseDto,
   CreateUserInput,
@@ -267,21 +267,32 @@ const update = async (
     if (user.stripeCustomerId) {
       const stripe = getStripe();
 
-      await stripe.customers.update(user.stripeCustomerId, {
-        name: user.name ?? "",
-        email: user.email,
-        phone: user.phone ?? "",
-        address: user.manualAddress
-          ? stripeAddressFromManual(user.manualAddress)
-          : {
-              line1: user.address?.street ?? "",
-              city: user.address?.city ?? "",
-              state: user.address?.county ?? "",
-              country: user.address?.country ?? "",
-              postal_code: user.address?.postalCode ?? "",
-            },
-        preferred_locales: [LOCALE],
-      });
+      try {
+        await stripe.customers.update(user.stripeCustomerId, {
+          name: user.name ?? "",
+          email: user.email,
+          phone: user.phone ?? "",
+          address: user.manualAddress
+            ? stripeAddressFromManual(user.manualAddress)
+            : {
+                line1: user.address?.street ?? "",
+                city: user.address?.city ?? "",
+                state: user.address?.county ?? "",
+                country: user.address?.country ?? "",
+                postal_code: user.address?.postalCode ?? "",
+              },
+          preferred_locales: [LOCALE],
+        });
+      } catch (error) {
+        if (!isMissingStripeCustomer(error)) {
+          throw error;
+        }
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { stripeCustomerId: null },
+        });
+      }
     }
 
     return {
@@ -338,13 +349,24 @@ const updateProfile = async (
     if (user.stripeCustomerId) {
       const stripe = getStripe();
 
-      await stripe.customers.update(user.stripeCustomerId, {
-        name: user.name ?? "",
-        email: user.email,
-        phone: user.phone ?? "",
-        address: stripeAddressFromManual(user.manualAddress),
-        preferred_locales: [LOCALE],
-      });
+      try {
+        await stripe.customers.update(user.stripeCustomerId, {
+          name: user.name ?? "",
+          email: user.email,
+          phone: user.phone ?? "",
+          address: stripeAddressFromManual(user.manualAddress),
+          preferred_locales: [LOCALE],
+        });
+      } catch (error) {
+        if (!isMissingStripeCustomer(error)) {
+          throw error;
+        }
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { stripeCustomerId: null },
+        });
+      }
     }
 
     return {
