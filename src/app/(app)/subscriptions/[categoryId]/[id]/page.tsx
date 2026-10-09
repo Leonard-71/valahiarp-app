@@ -76,7 +76,7 @@ export default async function SubscriptionDetailsPage({
           )}
 
           <div className="mt-8 max-w-xs border-t border-[rgba(242,233,225,0.08)] pt-8 lg:mt-auto">
-            <p className="text-muted-foreground text-lg tabular-nums">
+            <p className="text-muted-foreground text-center text-lg tabular-nums">
               {data.price} EUR
             </p>
             <div className="mt-5">
