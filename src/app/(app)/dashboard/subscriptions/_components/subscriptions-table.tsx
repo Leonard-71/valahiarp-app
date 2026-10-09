@@ -66,6 +66,11 @@ export function SubscriptionsTable({
       header: "Nume",
     },
     {
+      accessorKey: "servicePackage",
+      header: "Pachet servicii",
+      cell: ({ row }) => row.original.servicePackage || "—",
+    },
+    {
       accessorKey: "description",
       header: "Descriere",
       maxSize: 250,

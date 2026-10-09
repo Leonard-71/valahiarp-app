@@ -57,6 +57,10 @@ export const SubscriptionsForm: FC<SubscriptionsFormProps> = ({
           field.name as keyof SingleSubscriptionResponseDto;
         let defaultValue: any = subscription[subscriptionKey];
 
+        if (field.name === "servicePackage") {
+          defaultValue = subscription.servicePackage ?? "";
+        }
+
         if (field.name === "categoryId" && subscription.category) {
           defaultValue = {
             value: subscription.category.id,

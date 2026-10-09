@@ -229,7 +229,7 @@ async function checkout(
         price_data: {
           currency: CURRENCY,
           product_data: {
-            name: subscription.name,
+            name: subscription.servicePackage?.trim() || subscription.name,
             description: `Plata se efectuează în RON la cursul BNR din ziua tranzacției (1 EUR = ${exchangeRate.toFixed(4)} RON).\nPreț: ${subscription.price} EUR / ${(subscription.price * exchangeRate).toFixed(2)} RON.`,
             images: subscription.documents
               .map((doc) => doc.url)

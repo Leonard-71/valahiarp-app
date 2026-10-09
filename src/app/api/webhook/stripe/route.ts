@@ -118,6 +118,8 @@ export async function POST(request: NextRequest) {
               customerEmail: userResult.data.email,
               customerUsername: userResult.data.username || undefined,
               subscriptionName: subscriptionResult.data.name,
+              servicePackage:
+                subscriptionResult.data.servicePackage || undefined,
               price: subscriptionResult.data.price,
               invoiceUrl: retrievedInvoice.hosted_invoice_url,
               date: new Date(

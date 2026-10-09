@@ -61,6 +61,14 @@ export const subscriptionFormConfig: FormFieldConfig[] = [
     defaultValue: undefined,
   },
   {
+    name: "servicePackage",
+    label: "Pachet servicii",
+    type: FieldType.Text,
+    placeholder: "Pachet servicii 1",
+    validation: updateSubscriptionValidator.shape.servicePackage,
+    defaultValue: undefined,
+  },
+  {
     name: "description",
     label: "Descriere",
     type: FieldType.RichTextEditor,

@@ -2,7 +2,8 @@ export async function sendDiscordNotification(data: {
   customerName: string;
   customerEmail: string;
   customerUsername?: string;
-  subscriptionName: string; 
+  subscriptionName: string;
+  servicePackage?: string;
   price: number;
   invoiceUrl: string;
   date: string;
@@ -34,7 +35,7 @@ export async function sendDiscordNotification(data: {
         },
         {
           name: "📦 **DETALII COMANDĂ**",
-          value: `**\n Abonament:** ${data.subscriptionName}\n**Preț:** **${data.price} EUR**\n**Data:** ${data.date.split(' la ')[0]}\n**Ora:** ${data.date.split(' la ')[1]}`,
+          value: `**\n Abonament:** ${data.subscriptionName}\n**Pachet servicii:** ${data.servicePackage || "Nu este setat"}\n**Preț:** **${data.price} EUR**\n**Data:** ${data.date.split(' la ')[0]}\n**Ora:** ${data.date.split(' la ')[1]}`,
           inline: false
         },
         {
