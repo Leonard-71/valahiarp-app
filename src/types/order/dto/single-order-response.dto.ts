@@ -11,6 +11,7 @@ export type OrderPayload = Prisma.OrderGetPayload<{
     user: {
       include: {
         address: true;
+        manualAddress: true;
       };
     };
   };

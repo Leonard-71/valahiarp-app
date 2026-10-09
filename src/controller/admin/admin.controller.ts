@@ -6,7 +6,6 @@ import DOMPurify from "isomorphic-dompurify";
 
 import { UserRole } from "@/generated/prisma";
 import { authGuard } from "@/guards";
-import { findOrCreateByPlaceId } from "@/service/address";
 import {
   archive as archiveCategoryService,
   create as createCategoryService,
@@ -134,12 +133,6 @@ const updateUserByAdmin = authGuard(
           reason: Reason.VALIDATION_ERROR,
         },
       };
-    }
-
-    const address = await findOrCreateByPlaceId(input.addressId);
-
-    if (address.error) {
-      return address;
     }
 
     const { id: validatedId, ...rest } = validatedInput.data;

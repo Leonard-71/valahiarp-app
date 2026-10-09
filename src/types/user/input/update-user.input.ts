@@ -2,14 +2,17 @@ import { UserRole } from "@/generated/prisma";
 
 type UpdateUserInput = {
   name: string;
-  addressId: string;
-  username: string;
+  phone: string;
+  email: string;
+  country: string;
+  county: string;
+  locality: string;
+  street?: string;
 };
 
 type UpdateUserByAdminInput = {
   email: string;
   name: string;
-  addressId: string;
   username: string;
   role: UserRole;
 };

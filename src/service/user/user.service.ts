@@ -8,6 +8,7 @@ import { userFilterSpec } from "@/lib/filters/specs/user-filter-spec";
 import prisma from "@/lib/prisma";
 import { revalidateUserPaths } from "@/lib/revalidate";
 import { searchBuilder } from "@/lib/search-builder";
+import { stripeAddressFromManual } from "@/lib/manual-address";
 import { getStripe } from "@/lib/stripe";
 import {
   BasicUserResponseDto,
@@ -53,6 +54,7 @@ const create = async (
       data,
       include: {
         address: true,
+        manualAddress: true,
       },
     });
     revalidateUserPaths();
@@ -80,6 +82,7 @@ const findById = async (
       where: { id },
       include: {
         address: true,
+        manualAddress: true,
       },
     });
 
@@ -116,6 +119,7 @@ const findByEmail = async (
       where: { email },
       include: {
         address: true,
+        manualAddress: true,
       },
     });
 
@@ -185,6 +189,7 @@ const findAll = async (
         orderBy,
         include: {
           address: true,
+          manualAddress: true,
         },
       }),
       prisma.user.count({ where }),
@@ -236,7 +241,7 @@ const getAdminEmails = async (): Promise<ResponseDto<string[]>> => {
 
 const update = async (
   id: string,
-  data: UpdateUserByAdminInput | UpdateUserInput | UserTooManyRequestsInput,
+  data: UpdateUserByAdminInput | UserTooManyRequestsInput,
 ): Promise<ResponseDto<SingleUserResponseDto>> => {
   try {
     const user = await prisma.user.update({
@@ -244,6 +249,7 @@ const update = async (
       data,
       include: {
         address: true,
+        manualAddress: true,
       },
     });
     revalidateUserPaths();
@@ -263,13 +269,17 @@ const update = async (
 
       await stripe.customers.update(user.stripeCustomerId, {
         name: user.name ?? "",
-        address: {
-          line1: user.address?.street ?? "",
-          city: user.address?.city ?? "",
-          state: user.address?.county ?? "",
-          country: user.address?.country ?? "",
-          postal_code: user.address?.postalCode ?? "",
-        },
+        email: user.email,
+        phone: user.phone ?? "",
+        address: user.manualAddress
+          ? stripeAddressFromManual(user.manualAddress)
+          : {
+              line1: user.address?.street ?? "",
+              city: user.address?.city ?? "",
+              state: user.address?.county ?? "",
+              country: user.address?.country ?? "",
+              postal_code: user.address?.postalCode ?? "",
+            },
         preferred_locales: [LOCALE],
       });
     }
@@ -289,6 +299,77 @@ const update = async (
   }
 };
 
+const updateProfile = async (
+  id: string,
+  data: UpdateUserInput,
+): Promise<ResponseDto<SingleUserResponseDto>> => {
+  try {
+    const street = data.street?.trim() || null;
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        manualAddress: {
+          upsert: {
+            create: {
+              country: data.country,
+              county: data.county,
+              locality: data.locality,
+              street,
+            },
+            update: {
+              country: data.country,
+              county: data.county,
+              locality: data.locality,
+              street,
+            },
+          },
+        },
+      },
+      include: {
+        address: true,
+        manualAddress: true,
+      },
+    });
+    revalidateUserPaths();
+
+    if (user.stripeCustomerId) {
+      const stripe = getStripe();
+
+      await stripe.customers.update(user.stripeCustomerId, {
+        name: user.name ?? "",
+        email: user.email,
+        phone: user.phone ?? "",
+        address: stripeAddressFromManual(user.manualAddress),
+        preferred_locales: [LOCALE],
+      });
+    }
+
+    return {
+      data: transformUserToDto(user),
+      error: null,
+    };
+  } catch (error) {
+    const isEmailTaken =
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002";
+
+    return {
+      data: null,
+      error: {
+        message: isEmailTaken
+          ? "Există deja un cont cu acest email."
+          : error instanceof Error
+            ? error.message
+            : "Database error",
+        reason: Reason.DATABASE_ERROR,
+      },
+    };
+  }
+};
+
 const updateCustomerId = async (
   id: string,
   stripeCustomerId: string,
@@ -299,6 +380,7 @@ const updateCustomerId = async (
       data: { stripeCustomerId },
       include: {
         address: true,
+        manualAddress: true,
       },
     });
     revalidateUserPaths();
@@ -325,11 +407,14 @@ const anonymize = async (
   try {
     const anonymizedEmail = `anonymized_${id}@anonymized.local`;
 
+    await prisma.manualAddress.deleteMany({ where: { userId: id } });
+
     const user = await prisma.user.update({
       where: { id },
       data: {
         email: anonymizedEmail,
         name: null,
+        phone: null,
         username: null,
         imageUrl: null,
         addressAttempts: 0,
@@ -341,6 +426,7 @@ const anonymize = async (
       },
       include: {
         address: true,
+        manualAddress: true,
       },
     });
     revalidateUserPaths();
@@ -383,6 +469,7 @@ export {
   findByEmail,
   findAll,
   update,
+  updateProfile,
   updateCustomerId,
   anonymize,
   getAdminEmails,

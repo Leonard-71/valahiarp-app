@@ -3,6 +3,7 @@ import { Prisma } from "@/generated/prisma";
 type BasicUserResponseDto = Prisma.UserGetPayload<{
   include: {
     address: true;
+    manualAddress: true;
   };
 }>;
 

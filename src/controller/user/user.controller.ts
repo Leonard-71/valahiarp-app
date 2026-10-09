@@ -3,8 +3,7 @@
 import { Session } from "next-auth";
 
 import { authGuard } from "@/guards";
-import { findOrCreateByPlaceId } from "@/service/address";
-import { anonymize, findById, update } from "@/service/user";
+import { anonymize, findById, updateProfile } from "@/service/user";
 import { SingleUserResponseDto, UpdateUserInput } from "@/types/user";
 import { Reason, ResponseDto } from "@/types/utils";
 import { updateUserValidator, uuidValidator } from "@/validation";
@@ -50,15 +49,9 @@ const updateUser = authGuard(
       };
     }
 
-    const address = await findOrCreateByPlaceId(input.addressId);
-
-    if (address.error) {
-      return address;
-    }
-
     const { id: validatedId, ...rest } = validatedInput.data;
 
-    return await update(validatedId, rest);
+    return await updateProfile(validatedId, rest);
   },
 );
 

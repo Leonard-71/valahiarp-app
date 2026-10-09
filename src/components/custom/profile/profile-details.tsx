@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign, Mail, MapPin, User } from "lucide-react";
+import { AtSign, Mail, MapPin, Phone, User } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SingleUserResponseDto } from "@/types/user";
+import { formatManualAddress } from "@/lib/manual-address";
 
 interface ProfileDetailsProps {
   user: SingleUserResponseDto;
@@ -18,7 +19,7 @@ interface ProfileDetailsProps {
 
 export function ProfileDetails({ user }: ProfileDetailsProps) {
   const displayName = user.name || "-";
-  const displayAddress = user.address?.displayName || "-";
+  const displayAddress = formatManualAddress(user.manualAddress) || "-";
 
   const initials = displayName[0];
 
@@ -42,6 +43,14 @@ export function ProfileDetails({ user }: ProfileDetailsProps) {
             Nume complet
           </span>
           <span className="text-sm">{displayName}</span>
+        </div>
+        <Separator />
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+            <Phone className="size-4" />
+            Telefon
+          </span>
+          <span className="text-sm">{user.phone || "Nu este specificat"}</span>
         </div>
         <Separator />
         <div className="flex items-center justify-between">

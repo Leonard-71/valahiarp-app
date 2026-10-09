@@ -16,10 +16,22 @@ function checkProfileComplete(user: SingleUserResponseDto): {
   const missingFields: string[] = [];
 
   if (!user.name?.trim()) {
-    missingFields.push("Nume complet");
+    missingFields.push("Nume și prenume");
   }
-  if (!user.addressId) {
-    missingFields.push("Adresă");
+  if (!user.phone?.trim()) {
+    missingFields.push("Telefon");
+  }
+  if (!user.email?.trim()) {
+    missingFields.push("Email");
+  }
+  if (!user.manualAddress?.country) {
+    missingFields.push("Țara");
+  }
+  if (!user.manualAddress?.county) {
+    missingFields.push("Județul");
+  }
+  if (!user.manualAddress?.locality?.trim()) {
+    missingFields.push("Localitatea");
   }
 
   return {

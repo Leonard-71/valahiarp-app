@@ -43,14 +43,7 @@ export const UsersForm: FC<UsersFormProps> = ({ user, onSuccess }) => {
   const configWithDefaults: FormFieldConfig[] = editUserFormConfig.map(
     (field) => {
       const userKey = field.name as keyof SingleUserResponseDto;
-      let defaultValue: any = user[userKey];
-
-      if (field.name === "addressId" && user.address) {
-        defaultValue = {
-          value: user.address.placeId,
-          label: user.address.displayName,
-        };
-      }
+      const defaultValue: any = user[userKey];
 
       return { ...field, defaultValue };
     },

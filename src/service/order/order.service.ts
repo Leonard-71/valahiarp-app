@@ -16,6 +16,10 @@ import { LOCALE } from "@/constants/order/locale";
 import { InvoiceStatus, Prisma } from "@/generated/prisma";
 import { handleSubscriptionAvailability } from "@/lib/checkout-order-logic";
 import { decimalToNumber } from "@/lib/decimal-to-number";
+import {
+  formatManualAddress,
+  stripeAddressFromManual,
+} from "@/lib/manual-address";
 import { applyGenericFilters } from "@/lib/filters/filter-apply";
 import {
   orderFilterSpec,
@@ -139,7 +143,14 @@ async function checkout(
     };
   }
 
-  if (!user.addressId || !user.name) {
+  if (
+    !user.name ||
+    !user.phone ||
+    !user.email ||
+    !user.manualAddress?.locality ||
+    !user.manualAddress.county ||
+    !user.manualAddress.country
+  ) {
     return {
       data: null,
       error: {
@@ -177,17 +188,19 @@ async function checkout(
 
   if (user.stripeCustomerId) {
     customer = user.stripeCustomerId;
+    await stripe.customers.update(customer, {
+      email: user.email,
+      name: user.name ?? "",
+      phone: user.phone ?? "",
+      address: stripeAddressFromManual(user.manualAddress),
+      preferred_locales: [LOCALE],
+    });
   } else {
     const customerObject = await stripe.customers.create({
       email: user.email,
       name: user.name ?? "",
-      address: {
-        line1: user.address?.street ?? "",
-        city: user.address?.city ?? "",
-        state: user.address?.county ?? "",
-        country: user.address?.country ?? "",
-        postal_code: user.address?.postalCode ?? "",
-      },
+      phone: user.phone ?? "",
+      address: stripeAddressFromManual(user.manualAddress),
       preferred_locales: [LOCALE],
       invoice_settings: {
         rendering_options: {
@@ -299,6 +312,7 @@ const findOrderPresenceOnCategory = async (
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -358,6 +372,7 @@ const findOrderPresenceOnSubscriptions = async (
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -419,6 +434,7 @@ const findUserOrderPresenceOnSubscriptions = async (
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -475,6 +491,7 @@ const findOrderPresenceOnSubscription = async (
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -533,6 +550,7 @@ const findUserOrderPresenceOnSubscription = async (
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -581,6 +599,7 @@ const findExpiring = async (): Promise<
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -649,6 +668,7 @@ const findById = async (
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -825,6 +845,7 @@ const findAll = async (
           user: {
             include: {
               address: true,
+            manualAddress: true,
             },
           },
         },
@@ -881,6 +902,7 @@ const generateOrderReport = async (
         user: {
           include: {
             address: true,
+            manualAddress: true,
           },
         },
       },
@@ -919,7 +941,9 @@ const generateOrderReport = async (
       order.user.email || "",
       order.subscription.name || "",
       order.subscription.category?.name || "",
-      order.user.address?.displayName || "",
+      formatManualAddress(order.user.manualAddress) ||
+        order.user.address?.displayName ||
+        "",
       order.invoice.total,
       CURRENCY_LABELS[order.invoice.currency as keyof typeof CURRENCY_LABELS],
       order.invoice.productsTotal,

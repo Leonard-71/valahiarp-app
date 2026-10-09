@@ -1,16 +1,10 @@
-import { object, string } from "zod";
-
 import {
   createZodSchema,
   FieldType,
   FormFieldConfig,
 } from "@/components/custom/form-builder";
-import { asyncSelectAddresses } from "@/controller/select";
 import { UserRole } from "@/generated/prisma";
-import {
-  updateUserByAdminValidator,
-  updateUserValidator,
-} from "@/validation/user/user.validator";
+import { updateUserByAdminValidator } from "@/validation/user/user.validator";
 
 export const userRoleLabels: Record<UserRole, string> = {
   [UserRole.ADMIN]: "Admin",
@@ -23,7 +17,7 @@ export const editUserFormConfig: FormFieldConfig[] = [
     label: "Nume",
     type: FieldType.Text,
     placeholder: "Introduceți numele",
-    validation: updateUserValidator.shape.name,
+    validation: updateUserByAdminValidator.shape.name,
   },
   {
     name: "email",
@@ -37,32 +31,7 @@ export const editUserFormConfig: FormFieldConfig[] = [
     label: "Nume de utilizator",
     type: FieldType.Text,
     placeholder: "Introduceți numele de utilizator",
-    validation: updateUserValidator.shape.username,
-  },
-  {
-    name: "addressId",
-    label: "Adresă",
-    type: FieldType.AsyncSelect,
-    placeholder: "Căutați o adresă",
-    getData: asyncSelectAddresses,
-    validation: object(
-      {
-        value: string({
-          required_error: "Valoarea este obligatorie",
-          invalid_type_error: "Valoarea este obligatorie",
-        }),
-        label: string({
-          required_error: "Eticheta este obligatorie",
-          invalid_type_error: "Eticheta este obligatorie",
-        }),
-      },
-      {
-        required_error: "Selectați o adresă",
-        invalid_type_error: "Selectați o adresă",
-      },
-    ),
-    minQueryLength: 3,
-    debounceTimeout: 2000,
+    validation: updateUserByAdminValidator.shape.username,
   },
   {
     name: "role",
