@@ -21,12 +21,12 @@ export function ProductMedia({ images, name }: ProductMediaProps) {
 
   if (!current) {
     return (
-      <div className="relative aspect-[4/5] w-full">
+      <div className="relative aspect-square w-full">
         <Image
           src="/valahiarp-logo.png"
           alt={name}
           fill
-          className="object-contain p-10"
+          className="object-contain p-2"
           priority
         />
       </div>
@@ -38,7 +38,7 @@ export function ProductMedia({ images, name }: ProductMediaProps) {
       <button
         type="button"
         onClick={() => setLightboxOpen(true)}
-        className="relative aspect-[4/5] w-full cursor-zoom-in"
+        className="relative aspect-square w-full cursor-zoom-in"
         aria-label={`Vezi ${name}`}
       >
         <Image
@@ -46,7 +46,7 @@ export function ProductMedia({ images, name }: ProductMediaProps) {
           alt={current.name ?? name}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-contain p-8 md:p-12"
+          className="object-contain p-2"
           priority
         />
       </button>
