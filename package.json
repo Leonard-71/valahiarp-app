@@ -17,7 +17,7 @@
     "db:seed": "dotenv -e .env.local -- prisma db seed",
     "prisma:generate": "dotenv -e .env.local -- prisma generate",
     "prisma:studio": "dotenv -e .env.local -- prisma studio",
-    "build": "dotenv -e .env.local -- prisma generate && dotenv -e .env.local -- prisma migrate deploy && next build"
+    "build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",
