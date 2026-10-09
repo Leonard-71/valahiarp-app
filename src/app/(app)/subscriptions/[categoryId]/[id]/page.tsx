@@ -67,10 +67,15 @@ export default async function SubscriptionDetailsPage({
 
         <div className="flex flex-col px-5 py-8 md:px-8 lg:h-full lg:px-12 lg:pt-10 lg:pb-0">
           {data.description ? (
-            <div
-              className="rich-text-content text-muted-foreground max-w-md flex-1 text-sm leading-relaxed lg:pt-36 [&_a]:text-foreground [&_h1]:font-display [&_h1]:text-xl [&_h1]:font-normal [&_h2]:font-display [&_h2]:text-lg [&_h2]:font-normal [&_h3]:text-base [&_h3]:font-medium"
-              dangerouslySetInnerHTML={{ __html: data.description }}
-            />
+            <div className="max-w-md flex-1 lg:pt-48">
+              <p className="text-foreground mb-3 text-sm tracking-[0.14em] uppercase">
+                Descriere pachet
+              </p>
+              <div
+                className="rich-text-content text-muted-foreground text-sm leading-relaxed [&_a]:text-foreground [&_h1]:font-display [&_h1]:text-xl [&_h1]:font-normal [&_h2]:font-display [&_h2]:text-lg [&_h2]:font-normal [&_h3]:text-base [&_h3]:font-medium"
+                dangerouslySetInnerHTML={{ __html: data.description }}
+              />
+            </div>
           ) : (
             <div className="flex-1" />
           )}
