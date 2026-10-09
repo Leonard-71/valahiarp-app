@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -83,9 +84,17 @@ export const Header: FC = () => {
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-4 md:px-8">
           <Link
             href="/"
-            className="font-display title-burnt text-foreground hover:text-ember min-w-0 truncate text-base tracking-[0.12em] uppercase transition-colors sm:text-2xl sm:tracking-[0.18em] md:text-3xl"
+            className="font-display title-burnt text-foreground hover:text-ember flex min-w-0 items-center gap-2 truncate text-base tracking-[0.12em] uppercase transition-colors sm:gap-3 sm:text-2xl sm:tracking-[0.18em] md:text-3xl"
             onClick={handleLinkClick}
           >
+            <Image
+              src="/favicon.png"
+              alt=""
+              width={40}
+              height={40}
+              className="h-8 w-8 shrink-0 sm:h-10 sm:w-10"
+              priority
+            />
             {SITE.name}
           </Link>
 
@@ -122,9 +131,16 @@ export const Header: FC = () => {
         <div className="flex items-center justify-between px-5 py-4 md:px-8">
           <Link
             href="/"
-            className="font-display title-burnt truncate text-base tracking-[0.12em] uppercase sm:text-2xl sm:tracking-[0.18em]"
+            className="font-display title-burnt flex min-w-0 items-center gap-2 truncate text-base tracking-[0.12em] uppercase sm:gap-3 sm:text-2xl sm:tracking-[0.18em]"
             onClick={() => setIsMenuOpen(false)}
           >
+            <Image
+              src="/favicon.png"
+              alt=""
+              width={40}
+              height={40}
+              className="h-8 w-8 shrink-0 sm:h-10 sm:w-10"
+            />
             {SITE.name}
           </Link>
           <button
