@@ -69,6 +69,15 @@ export const subscriptionFormConfig: FormFieldConfig[] = [
     defaultValue: undefined,
   },
   {
+    name: "sortOrder",
+    label: "Ordine",
+    type: FieldType.Number,
+    placeholder: "1",
+    description: "1 apare primul în listă.",
+    validation: updateSubscriptionValidator.shape.sortOrder,
+    defaultValue: undefined,
+  },
+  {
     name: "description",
     label: "Descriere",
     type: FieldType.RichTextEditor,

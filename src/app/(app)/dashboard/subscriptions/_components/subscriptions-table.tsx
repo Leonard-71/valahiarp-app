@@ -71,6 +71,10 @@ export function SubscriptionsTable({
       cell: ({ row }) => row.original.servicePackage || "—",
     },
     {
+      accessorKey: "sortOrder",
+      header: "Ordine",
+    },
+    {
       accessorKey: "description",
       header: "Descriere",
       maxSize: 250,

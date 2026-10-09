@@ -1,6 +1,7 @@
 type UpdateSubscriptionInput = {
   name: string;
   servicePackage: string;
+  sortOrder: number;
   description?: string;
   price: number;
   categoryId: number;

@@ -62,7 +62,12 @@ export default async function SubscriptionDetailsPage({
 
         <div className="flex flex-col px-5 py-10 md:px-8 lg:px-12 lg:py-16">
           <h1 className="font-display text-4xl md:text-6xl">{data.name}</h1>
-          <p className="text-muted-foreground mt-5 text-lg tabular-nums">
+          {data.servicePackage ? (
+            <p className="text-muted-foreground mt-4 text-base">
+              {data.servicePackage}
+            </p>
+          ) : null}
+          <p className="text-muted-foreground mt-4 text-lg tabular-nums">
             {data.price} EUR
           </p>
 

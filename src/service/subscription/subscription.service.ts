@@ -146,9 +146,10 @@ const findAll = async (
   try {
     const { pagination, search, filters } = input;
 
-    const orderBy: Prisma.SubscriptionOrderByWithRelationInput = {
-      createdAt: "desc",
-    };
+    const orderBy: Prisma.SubscriptionOrderByWithRelationInput[] = [
+      { sortOrder: "asc" },
+      { id: "asc" },
+    ];
 
     let where: Prisma.SubscriptionWhereInput = {};
 

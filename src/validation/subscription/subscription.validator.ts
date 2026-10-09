@@ -13,6 +13,10 @@ const baseSubscriptionFields = {
     .trim()
     .min(3, "Pachetul de servicii trebuie să conțină cel puțin 3 caractere")
     .max(100, "Pachetul de servicii nu poate depăși 100 de caractere"),
+  sortOrder: coerce
+    .number({ invalid_type_error: "Ordinea trebuie să fie un număr" })
+    .int("Ordinea trebuie să fie un număr întreg")
+    .min(1, "Ordinea începe de la 1"),
   description: string().optional(),
   price: coerce.number({ invalid_type_error: "Prețul trebuie să fie un număr valid" }),
   categoryId: idValidator,

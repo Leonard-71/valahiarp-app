@@ -20,9 +20,10 @@ export const selectSubscriptions = async (
 
     const offset = pageIndex * pageSize;
 
-    const orderBy: Prisma.SubscriptionOrderByWithRelationInput = {
-      createdAt: "desc",
-    };
+    const orderBy: Prisma.SubscriptionOrderByWithRelationInput[] = [
+      { sortOrder: "asc" },
+      { id: "asc" },
+    ];
 
     const where: Prisma.SubscriptionWhereInput = search
       ? {
