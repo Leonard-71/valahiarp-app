@@ -2,6 +2,7 @@
 
 import { AtSign, Mail, MapPin, Phone, User } from "lucide-react";
 
+import { ProfileIncompleteWarning } from "@/app/(app)/profile/_components/profile-incomplete-warning";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -80,6 +81,7 @@ export function ProfileDetails({ user }: ProfileDetailsProps) {
             {displayAddress}
           </span>
         </div>
+        <ProfileIncompleteWarning user={user} />
       </CardContent>
     </Card>
   );
