@@ -2,21 +2,18 @@ import { Session } from "next-auth";
 
 import { LOCALE } from "@/constants/order/locale";
 import { Prisma, UserRole } from "@/generated/prisma";
-import { decimalToNumber } from "@/lib/decimal-to-number";
 import { applyGenericFilters } from "@/lib/filters/filter-apply";
 import { userFilterSpec } from "@/lib/filters/specs/user-filter-spec";
+import { stripeAddressFromManual } from "@/lib/manual-address";
 import prisma from "@/lib/prisma";
 import { revalidateUserPaths } from "@/lib/revalidate";
 import { searchBuilder } from "@/lib/search-builder";
-import { stripeAddressFromManual } from "@/lib/manual-address";
 import { getStripe, isMissingStripeCustomer } from "@/lib/stripe";
 import {
-  BasicUserResponseDto,
   CreateUserInput,
   SingleUserResponseDto,
   UpdateUserByAdminInput,
   UpdateUserInput,
-  UserTooManyRequestsInput,
 } from "@/types/user";
 import { UserWithRelationsDto } from "@/types/user/dto/user-with-relations.dto";
 import {
@@ -27,24 +24,9 @@ import {
 } from "@/types/utils";
 import { validateFiltersDetailed } from "@/validation/utils/filter";
 
-const transformUserToDto = (
-  user: BasicUserResponseDto,
-): SingleUserResponseDto => {
-  return {
-    ...user,
-    address: user.address
-      ? {
-          ...user.address,
-          latitude: user.address.latitude
-            ? decimalToNumber(user.address.latitude)
-            : null,
-          longitude: user.address.longitude
-            ? decimalToNumber(user.address.longitude)
-            : null,
-        }
-      : null,
-  };
-};
+const userInclude = {
+  manualAddress: true,
+} as const;
 
 const create = async (
   data: CreateUserInput,
@@ -52,15 +34,12 @@ const create = async (
   try {
     const user = await prisma.user.create({
       data,
-      include: {
-        address: true,
-        manualAddress: true,
-      },
+      include: userInclude,
     });
     revalidateUserPaths();
 
     return {
-      data: transformUserToDto(user),
+      data: user,
       error: null,
     };
   } catch (error) {
@@ -80,10 +59,7 @@ const findById = async (
   try {
     const user = await prisma.user.findUnique({
       where: { id },
-      include: {
-        address: true,
-        manualAddress: true,
-      },
+      include: userInclude,
     });
 
     if (!user) {
@@ -97,7 +73,7 @@ const findById = async (
     }
 
     return {
-      data: transformUserToDto(user),
+      data: user,
       error: null,
     };
   } catch (error) {
@@ -117,14 +93,11 @@ const findByEmail = async (
   try {
     const user = await prisma.user.findUnique({
       where: { email },
-      include: {
-        address: true,
-        manualAddress: true,
-      },
+      include: userInclude,
     });
 
     return {
-      data: user ? transformUserToDto(user) : null,
+      data: user,
       error: null,
     };
   } catch (error) {
@@ -155,7 +128,10 @@ const findAll = async (
         "name",
         "email",
         "username",
-        "address.displayName",
+        "manualAddress.country",
+        "manualAddress.county",
+        "manualAddress.locality",
+        "manualAddress.street",
       ]);
     }
 
@@ -187,10 +163,7 @@ const findAll = async (
         skip: pageIndex * pageSize,
         take: pageSize,
         orderBy,
-        include: {
-          address: true,
-          manualAddress: true,
-        },
+        include: userInclude,
       }),
       prisma.user.count({ where }),
     ]);
@@ -199,7 +172,7 @@ const findAll = async (
 
     return {
       data: {
-        content: users.map(transformUserToDto),
+        content: users,
         totalCount,
         pageCount: Math.ceil(totalCount / pageSize),
         hasMore,
@@ -241,16 +214,13 @@ const getAdminEmails = async (): Promise<ResponseDto<string[]>> => {
 
 const update = async (
   id: string,
-  data: UpdateUserByAdminInput | UserTooManyRequestsInput,
+  data: UpdateUserByAdminInput,
 ): Promise<ResponseDto<SingleUserResponseDto>> => {
   try {
     const user = await prisma.user.update({
       where: { id },
       data,
-      include: {
-        address: true,
-        manualAddress: true,
-      },
+      include: userInclude,
     });
     revalidateUserPaths();
 
@@ -272,15 +242,7 @@ const update = async (
           name: user.name ?? "",
           email: user.email,
           phone: user.phone ?? "",
-          address: user.manualAddress
-            ? stripeAddressFromManual(user.manualAddress)
-            : {
-                line1: user.address?.street ?? "",
-                city: user.address?.city ?? "",
-                state: user.address?.county ?? "",
-                country: user.address?.country ?? "",
-                postal_code: user.address?.postalCode ?? "",
-              },
+          address: stripeAddressFromManual(user.manualAddress),
           preferred_locales: [LOCALE],
         });
       } catch (error) {
@@ -296,7 +258,7 @@ const update = async (
     }
 
     return {
-      data: transformUserToDto(user),
+      data: user,
       error: null,
     };
   } catch (error) {
@@ -339,10 +301,7 @@ const updateProfile = async (
           },
         },
       },
-      include: {
-        address: true,
-        manualAddress: true,
-      },
+      include: userInclude,
     });
     revalidateUserPaths();
 
@@ -370,7 +329,7 @@ const updateProfile = async (
     }
 
     return {
-      data: transformUserToDto(user),
+      data: user,
       error: null,
     };
   } catch (error) {
@@ -400,15 +359,12 @@ const updateCustomerId = async (
     const user = await prisma.user.update({
       where: { id },
       data: { stripeCustomerId },
-      include: {
-        address: true,
-        manualAddress: true,
-      },
+      include: userInclude,
     });
     revalidateUserPaths();
 
     return {
-      data: transformUserToDto(user),
+      data: user,
       error: null,
     };
   } catch (error) {
@@ -439,17 +395,11 @@ const anonymize = async (
         phone: null,
         username: null,
         imageUrl: null,
-        addressAttempts: 0,
-        addressBlockedUntil: null,
-        addressId: null,
         isArchived: true,
         archivedAt: new Date(),
         archivedById: session.user.id,
       },
-      include: {
-        address: true,
-        manualAddress: true,
-      },
+      include: userInclude,
     });
     revalidateUserPaths();
 
@@ -471,7 +421,7 @@ const anonymize = async (
     }
 
     return {
-      data: transformUserToDto(user),
+      data: user,
       error: null,
     };
   } catch (error) {

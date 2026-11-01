@@ -45,7 +45,21 @@ const orderFilterSpec = generateFilterSpec<SingleOrderResponseDto>([
     label: "Username utilizator",
   },
   { field: "user.email", type: FilterType.TEXT, label: "Email utilizator" },
-  { field: "user.address.displayName", type: FilterType.TEXT, label: "Adresă" },
+  {
+    field: "user.manualAddress.country",
+    type: FilterType.TEXT,
+    label: "Țară",
+  },
+  {
+    field: "user.manualAddress.county",
+    type: FilterType.TEXT,
+    label: "Județ",
+  },
+  {
+    field: "user.manualAddress.locality",
+    type: FilterType.TEXT,
+    label: "Localitate",
+  },
   {
     field: "invoice.status",
     type: FilterType.MULTISELECT_STRING,

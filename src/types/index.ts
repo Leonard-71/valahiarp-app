@@ -1,4 +1,3 @@
-export * from "@/types/address";
 export * from "@/types/code";
 export * from "@/types/user";
 export * from "@/types/category";

@@ -1,4 +1,3 @@
-export * from "@/validation/address/address.validator";
 export * from "@/validation/order/order.validator";
 export * from "@/validation/code/code.validator";
 export * from "@/validation/utils/request.validator";

@@ -9,6 +9,7 @@ import { TableWrapper } from "@/components/custom/table";
 import { findAllUsers } from "@/controller/admin";
 import { EqualityOperators } from "@/lib/filters/filter-types";
 import { userFilterSpec } from "@/lib/filters/specs/user-filter-spec";
+import { formatManualAddress } from "@/lib/manual-address";
 import { SingleUserResponseDto } from "@/types";
 
 import { userRoleLabels } from "../_utils/edit-user-form.config";
@@ -69,8 +70,10 @@ export function UsersTable({
       cell: ({ row }) => (row.original.isArchived ? "Da" : "Nu"),
     },
     {
-      accessorKey: "address.displayName",
+      id: "manualAddress",
       header: "Adresă",
+      cell: ({ row }) =>
+        formatManualAddress(row.original.manualAddress) || "-",
     },
     {
       id: "actions",

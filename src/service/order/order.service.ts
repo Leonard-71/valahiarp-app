@@ -82,20 +82,7 @@ const transformOrderToDto = (order: OrderPayload): SingleOrderResponseDto => {
       ...order.subscription,
       price: decimalToNumber(order.subscription.price),
     },
-    user: {
-      ...order.user,
-      address: order.user.address
-        ? {
-            ...order.user.address,
-            latitude: order.user.address.latitude
-              ? decimalToNumber(order.user.address.latitude)
-              : null,
-            longitude: order.user.address.longitude
-              ? decimalToNumber(order.user.address.longitude)
-              : null,
-          }
-        : null,
-    },
+    user: order.user,
   };
 };
 
@@ -316,7 +303,6 @@ const findOrderPresenceOnCategory = async (
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -376,7 +362,6 @@ const findOrderPresenceOnSubscriptions = async (
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -438,7 +423,6 @@ const findUserOrderPresenceOnSubscriptions = async (
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -495,7 +479,6 @@ const findOrderPresenceOnSubscription = async (
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -554,7 +537,6 @@ const findUserOrderPresenceOnSubscription = async (
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -603,7 +585,6 @@ const findExpiring = async (): Promise<
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -672,7 +653,6 @@ const findById = async (
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -806,7 +786,10 @@ const findAll = async (
         "user.name",
         "user.username",
         "user.email",
-        "user.address.displayName",
+        "user.manualAddress.country",
+        "user.manualAddress.county",
+        "user.manualAddress.locality",
+        "user.manualAddress.street",
         "subscription.name",
         "subscription.category.name",
       ]);
@@ -849,8 +832,7 @@ const findAll = async (
           },
           user: {
             include: {
-              address: true,
-            manualAddress: true,
+              manualAddress: true,
             },
           },
         },
@@ -906,7 +888,6 @@ const generateOrderReport = async (
         },
         user: {
           include: {
-            address: true,
             manualAddress: true,
           },
         },
@@ -946,9 +927,7 @@ const generateOrderReport = async (
       order.user.email || "",
       order.subscription.name || "",
       order.subscription.category?.name || "",
-      formatManualAddress(order.user.manualAddress) ||
-        order.user.address?.displayName ||
-        "",
+      formatManualAddress(order.user.manualAddress),
       order.invoice.total,
       CURRENCY_LABELS[order.invoice.currency as keyof typeof CURRENCY_LABELS],
       order.invoice.productsTotal,

@@ -17,13 +17,4 @@ type UpdateUserByAdminInput = {
   role: UserRole;
 };
 
-type UserTooManyRequestsInput = {
-  addressAttempts: number;
-  addressBlockedUntil?: Date | null;
-};
-
-export type {
-  UpdateUserInput,
-  UpdateUserByAdminInput,
-  UserTooManyRequestsInput,
-};
+export type { UpdateUserInput, UpdateUserByAdminInput };

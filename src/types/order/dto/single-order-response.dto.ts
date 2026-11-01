@@ -10,33 +10,21 @@ export type OrderPayload = Prisma.OrderGetPayload<{
     };
     user: {
       include: {
-        address: true;
         manualAddress: true;
       };
     };
   };
 }>;
 
-type TransformedAddress = Omit<
-  NonNullable<OrderPayload["user"]["address"]>,
-  "latitude" | "longitude"
-> & {
-  latitude: number | null;
-  longitude: number | null;
-};
-
 type SingleOrderResponseDto = Omit<
   OrderPayload,
-  "invoice" | "subscription" | "user"
+  "invoice" | "subscription"
 > & {
   invoice: Omit<Invoice, "total" | "productsTotal"> & {
     total: number;
     productsTotal: number;
   };
   subscription: Omit<OrderPayload["subscription"], "price"> & { price: number };
-  user: Omit<OrderPayload["user"], "address"> & {
-    address: TransformedAddress | null;
-  };
 };
 
 type SingleOrderWithInvoiceLinksResponseDto = SingleOrderResponseDto & {

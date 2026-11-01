@@ -12,6 +12,7 @@ import {
   orderFilterSpec,
   orderStatusLabels,
 } from "@/lib/filters/specs/order-filter-spec";
+import { formatManualAddress } from "@/lib/manual-address";
 import {
   SingleOrderResponseDto,
   SingleOrderWithInvoiceLinksResponseDto,
@@ -84,8 +85,10 @@ export function OrdersTable({
       header: "Nume categorie",
     },
     {
-      accessorKey: "user.address.displayName",
+      id: "user.manualAddress",
       header: "Adresă",
+      cell: ({ row }) =>
+        formatManualAddress(row.original.user.manualAddress) || "-",
     },
     {
       accessorKey: "invoice.total",

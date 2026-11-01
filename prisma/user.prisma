@@ -4,23 +4,18 @@ enum UserRole {
 }
 
 model User {
-    id                  String    @id @default(uuid())
-    email               String    @unique
-    stripeCustomerId    String?   @unique
-    name                String?
-    phone               String?
-    username            String?
-    imageUrl            String?
-    addressAttempts     Int       @default(0)
-    addressBlockedUntil DateTime?
-    role                UserRole  @default(USER)
-    isArchived          Boolean   @default(false)
-    archivedAt          DateTime?
-    createdAt           DateTime  @default(now())
-    updatedAt           DateTime  @updatedAt
-
-    address   Address? @relation("UserAddress", fields: [addressId], references: [placeId])
-    addressId String?
+    id               String    @id @default(uuid())
+    email            String    @unique
+    stripeCustomerId String?   @unique
+    name             String?
+    phone            String?
+    username         String?
+    imageUrl         String?
+    role             UserRole  @default(USER)
+    isArchived       Boolean   @default(false)
+    archivedAt       DateTime?
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
 
     manualAddress ManualAddress?
 

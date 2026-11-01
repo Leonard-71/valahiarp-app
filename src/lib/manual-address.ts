@@ -12,10 +12,13 @@ export function formatManualAddress(
     return "";
   }
 
-  return [address.street, address.locality, address.county, address.country]
-    .map((part) => part?.trim())
-    .filter(Boolean)
-    .join(", ");
+  const parts = [
+    address.country?.trim() ? `Țară: ${address.country.trim()}` : null,
+    address.county?.trim() ? `Județ: ${address.county.trim()}` : null,
+    address.locality?.trim() ? `Localitate: ${address.locality.trim()}` : null,
+  ].filter(Boolean);
+
+  return parts.join(", ");
 }
 
 export function stripeAddressFromManual(

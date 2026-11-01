@@ -4,7 +4,6 @@ import { Session } from "next-auth";
 
 import { authGuard } from "@/guards";
 import {
-  selectAddresses,
   selectCategories,
   selectSubscriptions,
   selectUsers,
@@ -16,7 +15,7 @@ import {
   RequestInput,
   ResponseDto,
 } from "@/types";
-import { addressQueryValidator, requestValidator } from "@/validation";
+import { requestValidator } from "@/validation";
 
 const asyncSelectUsers = authGuard(
   async (
@@ -36,27 +35,6 @@ const asyncSelectUsers = authGuard(
     }
 
     return await selectUsers(validatedInput.data);
-  },
-);
-
-const asyncSelectAddresses = authGuard(
-  async (
-    session: Session,
-    input: RequestInput,
-  ): Promise<ResponseDto<PaginatedResponseDto<GenericSelectDataDto>>> => {
-    const validatedInput = addressQueryValidator.safeParse(input.search);
-
-    if (!validatedInput.success) {
-      return {
-        data: null,
-        error: {
-          message: validatedInput.error.message,
-          reason: Reason.VALIDATION_ERROR,
-        },
-      };
-    }
-
-    return await selectAddresses(session, validatedInput.data);
   },
 );
 
@@ -104,7 +82,6 @@ const asyncSelectSubscriptions = authGuard(
 
 export {
   asyncSelectUsers,
-  asyncSelectAddresses,
   asyncSelectCategories,
   asyncSelectSubscriptions,
 };

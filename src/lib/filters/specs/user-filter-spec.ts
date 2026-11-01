@@ -29,7 +29,21 @@ const userFilterSpec = generateFilterSpec<SingleUserResponseDto>([
     type: FilterType.BOOLEAN,
     label: "Anonimizat (Arhivat)",
   },
-  { field: "address.displayName", type: FilterType.TEXT, label: "Adresă" },
+  {
+    field: "manualAddress.country",
+    type: FilterType.TEXT,
+    label: "Țară",
+  },
+  {
+    field: "manualAddress.county",
+    type: FilterType.TEXT,
+    label: "Județ",
+  },
+  {
+    field: "manualAddress.locality",
+    type: FilterType.TEXT,
+    label: "Localitate",
+  },
 ]);
 
 export { userFilterSpec };

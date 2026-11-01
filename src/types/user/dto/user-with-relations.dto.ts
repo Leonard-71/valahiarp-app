@@ -1,7 +1,7 @@
 import { Prisma } from "@/generated/prisma";
 
 type UserWithRelationsDto = Prisma.UserGetPayload<{
-  include: { address: true; codes: true };
+  include: { manualAddress: true; codes: true };
 }>;
 
 export type { UserWithRelationsDto };

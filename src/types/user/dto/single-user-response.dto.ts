@@ -2,21 +2,10 @@ import { Prisma } from "@/generated/prisma";
 
 type BasicUserResponseDto = Prisma.UserGetPayload<{
   include: {
-    address: true;
     manualAddress: true;
   };
 }>;
 
-type AddressWithNumericCoords = Omit<
-  NonNullable<BasicUserResponseDto["address"]>,
-  "latitude" | "longitude"
-> & {
-  latitude: number | null;
-  longitude: number | null;
-};
-
-type SingleUserResponseDto = Omit<BasicUserResponseDto, "address"> & {
-  address: AddressWithNumericCoords | null;
-};
+type SingleUserResponseDto = BasicUserResponseDto;
 
 export type { SingleUserResponseDto, BasicUserResponseDto };
